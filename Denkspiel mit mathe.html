@@ -3,174 +3,621 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
-  <title>Mathe Knobel</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <title>Math Shooting Range - AKBK Edition</title>
   <style>
-    html, body { margin:0; padding:0; height:100%; font-family:'Inter',Arial,sans-serif; background:#222; overflow:hidden; }
-    .bg-image { position:fixed; top:0; left:0; width:100vw; height:100vh; object-fit:cover; z-index:0; filter:grayscale(0.13) brightness(0.75); opacity:0.73; }
-    .overlay { position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:1; background:rgba(50,50,60,0.05); backdrop-filter: blur(2px);}
-    .main-container { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:2; display:flex; flex-direction:column; align-items:center; width:90vw; max-width:600px; gap:2rem; transition:opacity 0.7s; }
-    .liquid-glass { background:rgba(255,255,255,0.25); border-radius:28px; box-shadow:0 8px 32px 0 rgba(31,38,135,0.37); backdrop-filter: blur(20px) saturate(170%); border:1.5px solid rgba(255,255,255,0.18); padding:2.5rem 1.5rem; width:100%; display:flex; flex-direction:column; align-items:center; transition:opacity 0.7s, transform 0.7s; position:relative; }
-    .title { font-size:2.5rem; font-weight:700; color:#fff; letter-spacing:1px; text-shadow:0 2px 12px rgba(0,0,0,0.30); margin-bottom:1rem; user-select:none; }
-    .level-list { display:grid; grid-template-columns: repeat(4,1fr); gap:1rem; width:100%; }
-    .level-box { background:rgba(255,255,255,0.42); border-radius:18px; box-shadow:0 4px 16px 0 rgba(31,38,135,0.13); border:2px solid rgba(255,255,255,0.22); font-size:1.1rem; color:#252525; text-align:center; font-weight:700; cursor:pointer; transition:transform 0.15s, background 0.2s, border 0.2s, filter 0.2s; padding:1.0rem 0; user-select:none; backdrop-filter: blur(9px) saturate(120%); position:relative; outline:none; touch-action:manipulation;}
-    .level-box.completed { border:2.5px solid gold; filter:grayscale(0.65) brightness(1.09); background:rgba(255,230,120,0.17); color:#7c6610; cursor:not-allowed !important; pointer-events:auto;}
-    .level-box:hover:not(.completed), .level-box:focus:not(.completed), .level-box:active:not(.completed) { background:rgba(30,215,96,0.19); color:#111; transform:scale(1.07);}
-    .copyright { position:fixed; left:20px; bottom:15px; z-index:102; color:rgba(255,255,255,0.7); font-size:0.85rem; font-weight:500; user-select:none; text-shadow:0 1px 3px rgba(0,0,0,0.5);}
-    .copyright::before { content:"©"; margin-right:4px; font-weight:700;}
-    @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-    @keyframes slideDown { from{ top:-100vh;} to{ top:19vh;}}
-    .modal { position:fixed; top:-100vh; left:50%; transform:translateX(-50%); z-index:1200; min-width:320px; background:rgba(255,255,255,0.99); border-radius:18px; box-shadow:0 8px 36px 0 rgba(31,38,135,0.21); padding:2.2rem 1.2rem 2.2rem 1.2rem; text-align:center; font-size:1.35rem; color:#2c2222; font-weight:600; animation:slideDown 0.65s forwards; display:none;}
-    .modal .modal-btns { margin-top:1.5rem; display:flex; justify-content:center; gap:1.7rem;}
-    .modal .modal-btn { background:#262a3c; color:#fff; border:none; border-radius:14px; padding:0.75rem 1.7rem; font-size:1.05rem; font-weight:600; cursor:pointer; transition:background 0.18s, transform 0.12s; box-shadow:0 2px 8px rgba(31,38,135,0.08); touch-action:manipulation;}
-    .modal .modal-btn:hover, .modal .modal-btn:active { background:#11182a;}
-    .back-btn { position:absolute; top:1.1rem; right:1.1rem; background:rgba(255,255,255,0.32); border:1.2px solid rgba(255,255,255,0.22); box-shadow:0 2px 6px rgba(31,38,135,0.10); backdrop-filter: blur(8px); border-radius:16px; color:#222; font-weight:700; font-size:1rem; padding:0.55em 1.3em; cursor:pointer; z-index:10; transition:background 0.22s, box-shadow 0.2s, transform 0.1s; touch-action:manipulation;}
-    .back-btn:hover, .back-btn:active { background:rgba(255,255,255,0.5); transform:scale(1.07);}
-
-    /* MOBILE & LANDSCAPE OPTIMIERUNG */
-    @media (max-width:768px) { 
-      .main-container { width:95vw; gap:1.5rem;} 
-      .level-list { grid-template-columns: repeat(2, 1fr); gap:1.5rem;} 
-      .title { font-size:2rem; margin-bottom:0.8rem;}
-      .level-box { padding:1.2rem 0; font-size:1rem;}
-      .copyright { left:10px; bottom:10px; font-size:0.75rem;}
-    }
-    @media (max-height:500px) and (orientation:landscape) {
-      .main-container { gap:1rem; transform:translate(-50%,-45%);}
-      .liquid-glass { padding:1.5rem 1rem;}
-      .title { font-size:1.8rem; margin-bottom:0.5rem;}
-      .level-list { gap:0.8rem;}
-      .level-box { padding:0.8rem 0; font-size:0.95rem;}
-      .progress-container { top:20px; padding:0.8rem 1.2rem;}
-      .back-btn { top:0.8rem; right:0.8rem; padding:0.4em 1em; font-size:0.9rem;}
+    /* AKBK GRUNDSTIL */
+    html, body { 
+      margin: 0; 
+      padding: 0; 
+      height: 100%; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #f5f5f5;
+      background-image: url('https://images2.alphacoders.com/941/941898.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      overflow: hidden; 
     }
 
-    /* FORTSCHRITTSANZEIGE */
-    .progress-container { position:absolute; left:50%; top:60px; transform:translateX(-50%); z-index:1300; background:rgba(255,255,255,0.25); border-radius:18px; border:2px solid rgba(100,100,130,0.16); box-shadow:0 2px 14px 0 rgba(60,70,120,0.08); backdrop-filter: blur(13px) saturate(120%); padding:1em 1.5em; user-select:none; display:none;}
-    .progress-title { font-weight:700; font-size:1.1rem; color:#25305a; margin-bottom:0.8em; text-align:center;}
-    .progress-bar { display:flex; gap:0.3em; justify-content:center; align-items:center; flex-wrap:wrap;}
-    .progress-block { width:20px; height:20px; border-radius:4px; border:2px solid rgba(100,100,130,0.3); background:rgba(255,255,255,0.2); transition:all 0.3s ease;}
-    .progress-block.filled { background:linear-gradient(45deg, #00ff88, #00cc66); border:2px solid #00aa44; box-shadow:0 0 8px rgba(0,255,136,0.5);}
-    .progress-counter { margin-left:1em; font-weight:700; font-size:1.1rem; color:#25305a;}
-
-    /* BLAUES FADENKREUZ NUR IN BUBBLE-AREA */
-    .bubble-area { 
-      position:relative; 
-      width:100%; 
-      height:360px; 
-      margin:1.2rem auto 0 auto; 
-      background:rgba(255,255,255,0.11); 
-      border-radius:24px; 
-      box-shadow:0 4px 14px rgba(31,38,135,0.06); 
-      overflow:hidden; 
-      z-index:10; 
-      border:1.2px solid rgba(80,80,120,0.10); 
-      display:flex; 
-      align-items:flex-end; 
-      justify-content:center;
-      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="%234A90E2" stroke-width="2"/><path d="M12 6v12M6 12h12" stroke="%234A90E2" stroke-width="2"/></svg>') 12 12, crosshair;
-      touch-action:manipulation;
+    /* OVERLAY FÜR BESSERE LESBARKEIT */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.85);
+      z-index: 1;
     }
 
-    .math-question { position:absolute; left:50%; top:16px; transform:translateX(-50%); background:rgba(255,255,255,0.21); border-radius:16px; padding:0.4em 1.7em; font-size:1.29rem; font-weight:700; color:#2a3056; box-shadow:0 2px 6px rgba(60,60,120,0.07); z-index:11; pointer-events:none; user-select:none; letter-spacing:0.04em;}
-    .bubble-progress { position:absolute; bottom:19px; left:50%; transform:translateX(-50%); color:#232323; font-size:1.09rem; font-weight:700; z-index:12; background:rgba(255,255,255,0.10); padding:0.18em 1.1em; border-radius:10px; pointer-events:none; user-select:none;}
-    .bubble { 
-      position:absolute; 
-      width:44px; 
-      height:38px; 
-      background:rgba(255,255,255,0.98); 
-      border-radius:17px; 
-      display:flex; 
-      align-items:center; 
-      justify-content:center; 
-      font-size:1.09rem; 
-      font-weight:700; 
-      color:#203; 
-      box-shadow:0 2px 8px rgba(60,60,90,0.13); 
-      border:1.5px solid rgba(140,140,180,0.13); 
-      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="%234A90E2" stroke-width="2"/><path d="M12 6v12M6 12h12" stroke="%234A90E2" stroke-width="2"/></svg>') 12 12, crosshair;
-      transition:background 0.14s, color 0.14s, transform 0.09s; 
-      user-select:none; 
-      z-index:15;
-      touch-action:manipulation;
+    /* AKBK FENSTER */
+    .akbk-window {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 90vw;
+      max-width: 800px;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      z-index: 1000;
+      overflow: hidden;
     }
 
-    .bubble.bubble-correct { 
-      background: linear-gradient(45deg, #00ff88, #00cc66) !important; 
-      border: 4px solid #00aa44 !important; 
-      color: #003311 !important; 
-      z-index: 999 !important; 
+    /* AKBK HEADER */
+    .akbk-header {
+      background: #FF6600;
+      padding: 20px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+    }
+
+    .akbk-logo-area {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .akbk-logo {
+      width: 40px;
+      height: 40px;
+      background: url('https://www.designtagebuch.de/wp-content/uploads/mediathek/2018/12/kolping-logo-743x545.jpg') no-repeat center;
+      background-size: contain;
+      background-color: white;
+      border-radius: 8px;
+      padding: 5px;
+    }
+
+    .akbk-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .akbk-close {
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: all 0.3s ease;
+    }
+
+    .akbk-close:hover {
+      background: white;
+      color: #FF6600;
+      transform: scale(1.1);
+    }
+
+    /* AKBK CONTENT */
+    .akbk-content {
+      padding: 30px;
+      background: white;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    /* HAUPTMENÜ STYLES */
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .game-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #333;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: #666;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    /* AKBK STYLE BUTTONS */
+    .level-box {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 20px 15px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      user-select: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .level-box:hover {
+      background: #FF6600;
+      color: white;
+      border-color: #FF6600;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(255, 102, 0, 0.3);
+    }
+
+    .level-box:active {
+      transform: translateY(-1px);
+    }
+
+    .level-box.completed {
+      background: #4CAF50;
+      color: white;
+      border-color: #4CAF50;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .level-box.completed::after {
+      content: '✓';
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      font-size: 14px;
+    }
+
+    /* QUIZ BEREICH */
+    .bubble-area {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      margin: 1rem auto 0 auto;
+      background: #f8f8f8;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      cursor: crosshair;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .math-question {
+      position: absolute;
+      left: 50%;
+      top: 20px;
+      transform: translateX(-50%);
+      background: #FF6600;
+      color: white;
+      border-radius: 25px;
+      padding: 12px 30px;
+      font-size: 20px;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(255, 102, 0, 0.3);
+      z-index: 11;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .bubble-progress {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #666;
+      font-size: 14px;
+      font-weight: 600;
+      z-index: 12;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px 20px;
+      border-radius: 20px;
+      pointer-events: none;
+      user-select: none;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .bubble {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: white;
+      border: 3px solid #FF6600;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: #333;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+      z-index: 15;
+    }
+
+    .bubble:hover {
+      transform: scale(1.15);
+      background: #FF6600;
+      color: white;
+      box-shadow: 0 6px 20px rgba(255, 102, 0, 0.4);
+    }
+
+    .bubble.bubble-correct {
+      background: #4CAF50 !important;
+      border-color: #4CAF50 !important;
+      color: white !important;
+      z-index: 999 !important;
       animation: correct-bubble-pulse 3s ease-in-out !important;
-      box-shadow: 0 0 30px #00ff88, 0 0 60px #00cc66, inset 0 0 10px #ffffff !important;
-      font-weight: 900 !important;
-      font-size: 1.3rem !important;
       transform: scale(1.5) !important;
+      font-size: 24px !important;
     }
-    @keyframes correct-bubble-pulse { 
-      0% { 
+
+    @keyframes correct-bubble-pulse {
+      0%, 100% { 
         transform: scale(1.5); 
-        box-shadow: 0 0 30px #00ff88, 0 0 60px #00cc66;
-        background: linear-gradient(45deg, #00ff88, #00cc66);
-      } 
-      25% { 
-        transform: scale(1.7); 
-        box-shadow: 0 0 40px #00ff88, 0 0 80px #00cc66, 0 0 20px #ffffff;
-        background: linear-gradient(45deg, #00cc66, #00ff88);
-      } 
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.6);
+      }
       50% { 
-        transform: scale(1.6); 
-        box-shadow: 0 0 50px #00ff88, 0 0 100px #00cc66, 0 0 30px #ffffff;
-        background: linear-gradient(45deg, #00ff88, #00aa44);
-      }
-      75% { 
-        transform: scale(1.7); 
-        box-shadow: 0 0 40px #00ff88, 0 0 80px #00cc66, 0 0 20px #ffffff;
-        background: linear-gradient(45deg, #00cc66, #00ff88);
-      }
-      100% { 
-        transform: scale(1.5); 
-        box-shadow: 0 0 30px #00ff88, 0 0 60px #00cc66;
-        background: linear-gradient(45deg, #00ff88, #00cc66);
+        transform: scale(1.8); 
+        box-shadow: 0 0 0 20px rgba(76, 175, 80, 0);
       }
     }
-    .bubble.bubble-wrong { background:#ffdbdb !important; border:1.7px solid #e84a4a; color:#872222; z-index:17; animation:bubble-wrong 1.2s ease-in;}
-    @keyframes bubble-wrong { 0% { transform:translateY(0) scale(1);} 15% { transform:translateY(-8px) scale(1.05);} 30% { transform:translateY(15px) scale(0.98);} 100% { transform:translateY(180px) scale(0.85); opacity:0.2;}}
-    .bubble.hidden { opacity:0 !important; pointer-events:none;}
+
+    .bubble.bubble-wrong {
+      background: #f44336 !important;
+      border-color: #f44336 !important;
+      color: white !important;
+      animation: bubble-wrong 1.2s ease-in;
+    }
+
+    @keyframes bubble-wrong {
+      0% { transform: translateY(0) scale(1) rotate(0deg); }
+      25% { transform: translateY(-10px) scale(1.1) rotate(-5deg); }
+      50% { transform: translateY(0) scale(1) rotate(5deg); }
+      100% { transform: translateY(200px) scale(0.8) rotate(180deg); opacity: 0; }
+    }
+
+    /* FORTSCHRITTSANZEIGE AKBK STYLE */
+    .progress-container {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      user-select: none;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-title {
+      font-weight: 600;
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .progress-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .progress-block {
+      width: 24px;
+      height: 24px;
+      border: 2px solid #e0e0e0;
+      background: white;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .progress-block.filled {
+      background: #FF6600;
+      border-color: #FF6600;
+      transform: scale(1.1);
+      box-shadow: 0 0 10px rgba(255, 102, 0, 0.4);
+    }
+
+    .progress-counter {
+      font-weight: 600;
+      font-size: 16px;
+      color: #666;
+      text-align: center;
+    }
+
+    /* BACK BUTTON AKBK STYLE */
+    .back-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: white;
+      border: 2px solid #FF6600;
+      border-radius: 25px;
+      color: #FF6600;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 8px 20px;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: #FF6600;
+      color: white;
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(255, 102, 0, 0.3);
+    }
+
+    /* AKBK MODAL DIALOG */
+    .akbk-modal {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      z-index: 2000;
+      display: none;
+      min-width: 400px;
+      overflow: hidden;
+    }
+
+    .akbk-modal-header {
+      background: #FF6600;
+      padding: 20px;
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .akbk-modal-content {
+      padding: 30px;
+      text-align: center;
+      font-size: 16px;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .akbk-modal-buttons {
+      padding: 0 30px 30px 30px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .akbk-button {
+      background: #FF6600;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 30px;
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 100px;
+    }
+
+    .akbk-button:hover {
+      background: #e55a00;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 102, 0, 0.3);
+    }
+
+    .akbk-button.secondary {
+      background: white;
+      color: #FF6600;
+      border: 2px solid #FF6600;
+    }
+
+    .akbk-button.secondary:hover {
+      background: #fff5f0;
+    }
+
+    /* BLUESCREEN KOLPING STYLE */
+    .bluescreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #FF6600;
+      z-index: 9999;
+      display: none;
+      color: white;
+      padding: 50px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .bluescreen-content {
+      font-size: 20px;
+      line-height: 1.8;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .bluescreen h1 {
+      font-size: 48px;
+      margin-bottom: 30px;
+      font-weight: 700;
+    }
+
+    .error-icon {
+      font-size: 100px;
+      margin-bottom: 30px;
+    }
+
+    /* COPYRIGHT */
+    .copyright {
+      position: fixed;
+      left: 20px;
+      bottom: 15px;
+      z-index: 102;
+      color: #666;
+      font-size: 12px;
+      user-select: none;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+
+    /* MOBILE ANPASSUNGEN */
+    @media (max-width: 768px) {
+      .akbk-window { width: 95vw; max-width: none; }
+      .level-grid { grid-template-columns: repeat(2, 1fr); }
+      .game-title { font-size: 2rem; }
+      .akbk-modal { min-width: 300px; width: 90vw; }
+      .bubble { width: 50px; height: 50px; font-size: 16px; }
+    }
+
+    @media (max-height: 500px) and (orientation: landscape) {
+      .akbk-content { padding: 20px; }
+      .bubble-area { height: 280px; }
+      .progress-container { padding: 15px; }
+    }
   </style>
 </head>
 <body>
-  <img class="bg-image" src="https://512pixels.net/wp-content/uploads/2025/06/14-Sonoma-Horizon-thumb.jpeg" alt=""/>
-  <div class="overlay"></div>
-  <div class="copyright">YS.RXH</div>
-  <div class="main-container" id="mainMenu">
-    <div class="liquid-glass">
-      <div class="title">Knobeln mit Mathe</div>
-      <div class="level-list" id="levelList"></div>
+  <div class="copyright">© YS.RXH - AKBK Edition</div>
+  
+  <!-- KOLPING ERROR SCREEN -->
+  <div class="bluescreen" id="bluescreen">
+    <div class="bluescreen-content">
+      <div class="error-icon">⚠️</div>
+      <h1>Kolping Mathematik-System</h1>
+      <p>Es wurde ein Problem festgestellt und das System wurde zum Schutz angehalten.</p>
+      <p style="margin: 30px 0; font-size: 24px; font-weight: bold;">MATHE_ÜBERFORDERUNG_ERKANNT</p>
+      <p>Dies passiert, wenn zu viele falsche Antworten in kurzer Zeit gegeben werden.</p>
+      <p style="margin-top: 40px;">Bitte atmen Sie tief durch und versuchen Sie es erneut.</p>
+      <p style="margin-top: 20px; font-size: 16px;">Fehlercode: AKBK_MATH_2024</p>
     </div>
   </div>
-  <div class="main-container" id="quizContainer" style="display:none;">
-    <div class="liquid-glass" id="quizInner"></div>
-  </div>
   
-  <!-- FORTSCHRITTSANZEIGE -->
-  <div class="progress-container" id="progressContainer">
-    <div class="progress-title">Fortschritt</div>
-    <div class="progress-bar" id="progressBar"></div>
-    <div class="progress-counter" id="progressCounter">0/10</div>
-  </div>
-  
-  <div class="modal" id="modal">
-    <div class="modal-content" id="modalContent"></div>
-    <div class="modal-btns">
-      <button class="modal-btn" id="btnYes">Ja</button>
-      <button class="modal-btn" id="btnNo">Nein, auf kein Fall</button>
+  <!-- HAUPTMENÜ -->
+  <div class="akbk-window" id="mainMenu">
+    <div class="akbk-header">
+      <div class="akbk-logo-area">
+        <div class="akbk-logo"></div>
+        <div class="akbk-title">Math Shooting Range</div>
+      </div>
+      <button class="akbk-close" onclick="closeApp()">×</button>
+    </div>
+    <div class="akbk-content">
+      <div class="main-container">
+        <h1 class="game-title">Math Shooting Range</h1>
+        <p class="subtitle">Trainiere deine Mathematik-Fähigkeiten</p>
+        <div class="level-grid" id="levelList"></div>
+      </div>
     </div>
   </div>
-  <audio id="soundRight" src="https://cdn.pixabay.com/audio/2024/05/19/audio_48ac856676.mp3"></audio>
-  <audio id="soundWrong" src="https://cdn.pixabay.com/audio/2022/11/20/audio_4d2cc8231f.mp3"></audio>
+
+  <!-- QUIZ FENSTER -->
+  <div class="akbk-window" id="quizContainer" style="display:none;">
+    <div class="akbk-header">
+      <div class="akbk-logo-area">
+        <div class="akbk-logo"></div>
+        <div class="akbk-title">Level <span id="levelNumber">1</span></div>
+      </div>
+      <button class="akbk-close" onclick="backToMenu()">×</button>
+    </div>
+    <div class="akbk-content">
+      <div class="progress-container" id="progressContainer">
+        <div class="progress-title">Fortschritt</div>
+        <div class="progress-bar" id="progressBar"></div>
+        <div class="progress-counter" id="progressCounter">0/10</div>
+      </div>
+      <div id="quizInner"></div>
+    </div>
+  </div>
+  
+  <!-- AKBK STYLE MODAL -->
+  <div class="akbk-modal" id="modal">
+    <div class="akbk-modal-header">
+      Math Shooting Range
+    </div>
+    <div class="akbk-modal-content" id="modalContent"></div>
+    <div class="akbk-modal-buttons">
+      <button class="akbk-button" id="btnYes">Ja</button>
+      <button class="akbk-button secondary" id="btnNo">Nein</button>
+    </div>
+  </div>
+
+  <audio id="soundRight" src="https://www.myinstants.com/media/sounds/duolingo-correct.mp3"></audio>
+  <audio id="soundWrong" src="https://cdn.pixabay.com/audio/2022/03/24/audio_fbae226dbc.mp3"></audio>
   <audio id="soundCena" src="https://www.myinstants.com/media/sounds/john-cena-intro.mp3"></audio>
+  <audio id="soundError" src="https://cdn.pixabay.com/audio/2023/04/02/audio_f3f3b6b9.mp3"></audio>
+  
   <script>
-    // --- NEUE LEVEL-STRUKTUR ---
+    // --- WINDOW CONTROLS ---
+    function closeApp() {
+      if (confirm('Möchten Sie Math Shooting Range wirklich beenden?')) {
+        window.close();
+      }
+    }
+
+    // --- RAGE QUIT SYSTEM ---
+    let wrongAnswerCount = 0;
+    let consecutiveWrongAnswers = 0;
+    let rapidClickCount = 0;
+    let lastClickTime = 0;
+    const RAGE_QUIT_THRESHOLD = 15;
+    const RAPID_CLICK_THRESHOLD = 8;
+    
+    function checkRageQuit() {
+      wrongAnswerCount++;
+      consecutiveWrongAnswers++;
+      
+      if (wrongAnswerCount >= RAGE_QUIT_THRESHOLD || rapidClickCount >= RAPID_CLICK_THRESHOLD) {
+        triggerBluescreen();
+        return true;
+      }
+      return false;
+    }
+    
+    function triggerBluescreen() {
+      document.getElementById('soundError').play();
+      document.getElementById('bluescreen').style.display = 'block';
+      document.body.style.pointerEvents = 'none';
+      document.querySelector('.bluescreen').style.pointerEvents = 'auto';
+    }
+    
+    function trackClick() {
+      const now = Date.now();
+      if (now - lastClickTime < 300) {
+        rapidClickCount++;
+      } else {
+        rapidClickCount = Math.max(0, rapidClickCount - 1);
+      }
+      lastClickTime = now;
+    }
+
+    // --- LEVEL KONFIGURATION ---
     const levelConfigs = [
       { type: 'plusminus', range: [1, 10], description: 'Plus/Minus 1-10' },
       { type: 'plusminus', range: [1, 50], description: 'Plus/Minus 1-50' },
@@ -187,7 +634,7 @@
     const REQUIRED_CORRECT = 10;
     let usedQuestions = new Set();
 
-    // --- Zufällige Aufgaben-Generierung ---
+    // --- AUFGABEN GENERIERUNG ---
     function generateRandomQuestion(levelConfig) {
       let attempts = 0;
       let question, answer, choices;
@@ -249,7 +696,7 @@
         return createQuestion({ type: operator === '+' || operator === '-' ? 'plusminus' : 'maldivide', range: config.range });
       }
       
-      question = `${num1}${operator}${num2}=`;
+      question = `${num1} ${operator} ${num2} = ?`;
       const wrongAnswers = generateWrongAnswers(answer, min, max);
       const choices = shuffleArray([answer, ...wrongAnswers]).slice(0, 10);
       
@@ -280,7 +727,7 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    // --- Fortschrittsanzeige ---
+    // --- FORTSCHRITTSANZEIGE ---
     function initProgressBar() {
       const progressBar = document.getElementById('progressBar');
       progressBar.innerHTML = '';
@@ -309,6 +756,7 @@
 
     function addCorrectAnswer() {
       correctAnswers++;
+      consecutiveWrongAnswers = 0;
       updateProgressDisplay();
       
       if(correctAnswers >= REQUIRED_CORRECT) {
@@ -325,11 +773,11 @@
       }
     }
 
-    // --- Levelauswahl ---
+    // --- LEVELAUSWAHL ---
     function renderLevelList() {
       const levelList = document.getElementById('levelList');
       levelList.innerHTML = '';
-      for(let i=0; i<levelConfigs.length; i++){
+      for(let i = 0; i < levelConfigs.length; i++){
         const div = document.createElement('div');
         div.className = "level-box" + (progress[i] ? " completed" : "");
         div.innerText = `Level ${i+1}`;
@@ -347,14 +795,14 @@
     }
     renderLevelList();
 
-    // --- Quiz Game ---
+    // --- QUIZ GAME ---
     const mainMenu = document.getElementById('mainMenu');
     const quizContainer = document.getElementById('quizContainer');
     const quizInner = document.getElementById('quizInner');
     const soundRight = document.getElementById('soundRight');
     const soundWrong = document.getElementById('soundWrong');
     const soundCena = document.getElementById('soundCena');
-    let currentLevel=0, currentQuestion=0, wrongQuestions=[], waiting=false, bubbleIntervals=[], answered=false;
+    let currentLevel = 0, currentQuestion = 0, wrongQuestions = [], waiting = false, bubbleIntervals = [], answered = false;
     let bubbleSpawnInterval = null;
     let currentQuestionObj = null;
 
@@ -365,16 +813,18 @@
       correctAnswers = 0;
       usedQuestions.clear();
       
-      document.getElementById('progressContainer').style.display = 'block';
-      initProgressBar();
+      // Reset Rage Quit counters
+      wrongAnswerCount = 0;
+      consecutiveWrongAnswers = 0;
+      rapidClickCount = 0;
       
-      mainMenu.style.opacity = 0;
-      setTimeout(()=>{
-        mainMenu.style.display = "none";
-        quizContainer.style.display = "flex";
-        quizContainer.style.opacity = 1;
-        showBubbleQuestion();
-      }, 650);
+      document.getElementById('levelNumber').textContent = idx + 1;
+      
+      mainMenu.style.display = "none";
+      quizContainer.style.display = "block";
+      
+      initProgressBar();
+      showBubbleQuestion();
     }
 
     function showBubbleQuestion(){
@@ -394,18 +844,19 @@
           <div class="bubble-progress">Richtig: ${correctAnswers}/${REQUIRED_CORRECT}</div>
         </div>
       `;
+      
       document.getElementById('backBtn').onclick = function(){
-        stopBubbles();
-        document.getElementById('progressContainer').style.display = 'none';
-        quizContainer.style.opacity = 0;
-        setTimeout(()=>{
-          quizContainer.style.display = "none";
-          mainMenu.style.display = "flex";
-          mainMenu.style.opacity = 1;
-          renderLevelList();
-        }, 600);
+        backToMenu();
       };
+      
       startBubbleLoop();
+    }
+
+    function backToMenu() {
+      stopBubbles();
+      quizContainer.style.display = "none";
+      mainMenu.style.display = "block";
+      renderLevelList();
     }
 
     function startBubbleLoop() {
@@ -427,39 +878,39 @@
       if (!area || correctAnswers >= REQUIRED_CORRECT || !currentQuestionObj) return;
 
       const choices = shuffleArray([...currentQuestionObj.cs]);
-      let bubbleWidth = 44, bubbleHeight = 38, areaW = area.offsetWidth, areaH = area.offsetHeight;
+      let bubbleWidth = 60, bubbleHeight = 60, areaW = area.offsetWidth, areaH = area.offsetHeight;
       let positions = [];
 
       const bubblesPerWave = 3 + Math.floor(Math.random() * 2);
       const selectedChoices = choices.slice(0, bubblesPerWave);
 
-      for(let i=0; i<selectedChoices.length; i++){
+      for(let i = 0; i < selectedChoices.length; i++){
         let tries = 0;
         let pos;
         do {
           pos = {
-            y: Math.random() * (areaH-bubbleHeight-60) + 45
+            y: Math.random() * (areaH - bubbleHeight - 60) + 45
           };
           tries++;
-        } while(overlap(pos, positions, bubbleHeight) && tries<30);
+        } while(overlap(pos, positions, bubbleHeight) && tries < 30);
         positions.push(pos);
       }
 
-      selectedChoices.forEach((choice,i)=>{
+      selectedChoices.forEach((choice, i) => {
         let top = positions[i].y;
         let bubble = document.createElement("div");
         bubble.className = "bubble";
         bubble.style.top = `${top}px`;
-        bubble.style.left = `${areaW + Math.random()*40}px`;
+        bubble.style.left = `${areaW + Math.random() * 40}px`;
         bubble.innerText = choice;
         area.appendChild(bubble);
 
         const levelSpeed = levelConfigs[currentLevel].speed || 1;
-        let speed = (1.2 + Math.random()*0.8) * levelSpeed;
+        let speed = (1.2 + Math.random() * 0.8) * levelSpeed;
         
-        let moveFn = ()=>{
+        let moveFn = () => {
           let left = parseFloat(bubble.style.left);
-          if(left > -bubbleWidth-10 && !answered && correctAnswers < REQUIRED_CORRECT){
+          if(left > -bubbleWidth - 10 && !answered && correctAnswers < REQUIRED_CORRECT){
             bubble.style.left = (left - speed) + "px";
             requestAnimationFrame(moveFn);
           } else {
@@ -469,15 +920,16 @@
           }
         };
 
-        setTimeout(()=>{ 
+        setTimeout(() => { 
           if (!answered && correctAnswers < REQUIRED_CORRECT) {
             requestAnimationFrame(moveFn); 
           }
-        }, Math.random()*1000);
+        }, Math.random() * 1000);
 
-        // Touch & Click Events
-        const handleClick = ()=>{
+        const handleClick = () => {
           if(answered || correctAnswers >= REQUIRED_CORRECT) return;
+          
+          trackClick();
 
           if(choice == currentQuestionObj.a){
             answered = true;
@@ -494,7 +946,7 @@
             bubble.style.transform = 'none';
 
             let allBubs = area.querySelectorAll('.bubble');
-            allBubs.forEach(bub=>{
+            allBubs.forEach(bub => {
               if(bub !== bubble) {
                 bub.remove();
               }
@@ -514,14 +966,20 @@
             }, 3000);
 
           } else {
+            // Falsche Antwort
+            if (checkRageQuit()) {
+              return;
+            }
+            
             bubble.classList.add("bubble-wrong");
-            soundWrong.currentTime=0; soundWrong.play();
+            soundWrong.currentTime = 0; 
+            soundWrong.play();
             
             removeCorrectAnswer();
 
             bubble.style.position = 'absolute';
 
-            setTimeout(()=>{ 
+            setTimeout(() => { 
               if (bubble.parentNode) bubble.remove();
             }, 1200);
           }
@@ -536,7 +994,7 @@
     }
 
     function overlap(pos, arr, h){
-      return arr.some(p=>Math.abs(p.y-pos.y)<h+12);
+      return arr.some(p => Math.abs(p.y - pos.y) < h + 12);
     }
 
     function stopBubbles(){
@@ -544,7 +1002,7 @@
         clearInterval(bubbleSpawnInterval);
         bubbleSpawnInterval = null;
       }
-      bubbleIntervals.forEach(c=>clearInterval(c));
+      bubbleIntervals.forEach(c => clearInterval(c));
       bubbleIntervals = [];
 
       const area = document.getElementById('bubbleArea');
@@ -558,9 +1016,9 @@
 
     function shuffleArray(arr) {
       const newArr = [...arr];
-      for(let i=newArr.length-1;i>0;i--){
-        const j=Math.floor(Math.random()*(i+1));
-        [newArr[i],newArr[j]]=[newArr[j],newArr[i]];
+      for(let i = newArr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
       }
       return newArr;
     }
@@ -581,60 +1039,45 @@
     const btnNo = document.getElementById('btnNo');
 
     function finishLevel(){
-      progress[currentLevel]=true;
+      progress[currentLevel] = true;
       
-      modalContent.innerHTML = `Level ${currentLevel+1} abgeschlossen!<br><br>🎉 ${REQUIRED_CORRECT} richtige Antworten erreicht! 🎉<br><br>Zurück ins Hauptmenü?`;
+      modalContent.innerHTML = `
+        <div style="margin-bottom: 20px;">
+          <div style="font-size: 64px;">🎉</div>
+        </div>
+        <strong style="font-size: 20px;">Level ${currentLevel + 1} erfolgreich abgeschlossen!</strong><br><br>
+        Sie haben ${REQUIRED_CORRECT} richtige Antworten erreicht!<br><br>
+        Möchten Sie zum Hauptmenü zurückkehren?
+      `;
       modal.style.display = "block";
-      setTimeout(()=>{ modal.style.top = "19vh"; }, 20);
 
-      btnYes.onclick = ()=>{
-        document.getElementById('progressContainer').style.display = 'none';
-        quizContainer.style.opacity = 0;
+      btnYes.onclick = () => {
         modal.style.display = "none";
-        setTimeout(()=>{
-          quizContainer.style.display = "none";
-          mainMenu.style.display = "flex";
-          mainMenu.style.opacity = 1;
-          renderLevelList();
-        }, 650);
+        backToMenu();
       };
-      btnNo.onclick = ()=>{
-        modalContent.innerHTML = "Mach's gut! 👋";
-        setTimeout(()=>{
-          window.open("https://shattereddisk.github.io/rickroll/rickroll.mp4","_blank");
+      
+      btnNo.onclick = () => {
+        modalContent.innerHTML = "Auf Wiedersehen! 👋";
+        setTimeout(() => {
+          window.open("https://shattereddisk.github.io/rickroll/rickroll.mp4", "_blank");
           window.close();
         }, 800);
       };
     }
 
-    window.onbeforeunload = function() { return "Willst du wirklich das Spiel verlassen?"; }
-
-    // Mobile Orientation Lock Hint
-    if(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      window.addEventListener('orientationchange', function() {
-        setTimeout(function() {
-          if (window.orientation === 90 || window.orientation === -90) {
-            // Landscape - optimal für Spiel
-            document.body.style.transform = 'none';
-          } else {
-            // Portrait - Hinweis für bessere Erfahrung
-            if (window.innerHeight < window.innerWidth) {
-              document.body.style.transform = 'none';
-            }
-          }
-        }, 100);
-      });
+    window.onbeforeunload = function() { 
+      return "Möchten Sie Math Shooting Range wirklich verlassen?"; 
     }
 
-    // Touch Events Prevention for better mobile experience
+    // Mobile touch prevention
     document.addEventListener('touchmove', function(e) {
-      if (e.target.closest('.bubble-area') || e.target.closest('.level-box') || e.target.closest('.modal-btn')) {
-        return; // Allow touch on game elements
+      if (e.target.closest('.bubble-area') || e.target.closest('.level-box') || e.target.closest('.akbk-button')) {
+        return;
       }
       e.preventDefault();
     }, { passive: false });
 
-    // Prevent double-tap zoom on mobile
+    // Prevent double-tap zoom
     let lastTouchEnd = 0;
     document.addEventListener('touchend', function(e) {
       const now = (new Date()).getTime();
